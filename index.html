@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EV Gearbox Efficiency Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">Electric Vehicle Drivetrain Portfolio Project</p>
+        <h1>Gearbox Efficiency Lab</h1>
+      </div>
+    </header>
+
+    <section class="dashboard">
+      <aside class="panel inputs">
+        <h2>Operating point</h2>
+        <label>Wheel speed <output id="speedOut">70</output> km/h</label>
+        <input id="speed" type="range" min="10" max="160" value="70" />
+        <label>Wheel torque <output id="torqueOut">180</output> Nm</label>
+        <input id="torque" type="range" min="20" max="500" value="180" />
+        <label>Gear ratio <output id="ratioOut">8.0</output></label>
+        <input id="ratio" type="range" min="4" max="12" step="0.1" value="8" />
+        <label>Battery power <output id="powerOut">60</output> kW</label>
+        <input id="power" type="range" min="10" max="150" value="60" />
+
+        <h2>Loss model</h2>
+        <label>Mesh coefficient <output id="meshOut">0.018</output></label>
+        <input id="mesh" type="range" min="0.005" max="0.035" step="0.001" value="0.018" />
+        <label>Spin loss <output id="spinOut">450</output> W</label>
+        <input id="spin" type="range" min="100" max="1200" step="10" value="450" />
+        <label>Oil temperature <output id="oilOut">70</output> °C</label>
+        <input id="oil" type="range" min="20" max="110" value="70" />
+      </aside>
+
+      <section class="panel visualization">
+        <div class="metric-grid">
+          <article><span>Gearbox efficiency</span><strong id="efficiency">--</strong></article>
+          <article><span>Total loss</span><strong id="loss">--</strong></article>
+          <article><span>Motor torque</span><strong id="motorTorque">--</strong></article>
+          <article><span>Estimated range effect</span><strong id="rangeEffect">--</strong></article>
+        </div>
+        <canvas id="efficiencyMap" width="860" height="520" aria-label="Gearbox efficiency map"></canvas>
+        <div class="legend"><span><i class="dot active"></i>Current point</span><span><i class="dot contour"></i>Efficiency contour</span></div>
+      </section>
+    </section>
+
+    <section class="panel equations">
+      <h2>Engineering model</h2>
+      <div class="equation-grid">
+        <p><strong>Power balance</strong><br />P<sub>motor</sub> = P<sub>wheel</sub> / η + P<sub>spin</sub></p>
+        <p><strong>Torque relation</strong><br />T<sub>motor</sub> = T<sub>wheel</sub> / i</p>
+        <p><strong>Mesh loss</strong><br />P<sub>mesh</sub> = C<sub>mesh</sub> · P<sub>motor</sub></p>
+        <p><strong>Thermal correction</strong><br />P<sub>oil</sub> · (70/T<sub>oil</sub>)<sup>0.12</sup></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
