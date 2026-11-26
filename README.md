@@ -4,7 +4,7 @@ An interactive electric-vehicle drivetrain analysis with a GitHub Pages dashboar
 
 ## Live website
 
-After this change is merged and the Pages workflow completes, open: **https://raghav1822.github.io/ev-gearbox-efficiency-analysis/**
+The existing GitHub Pages site is configured to publish the repository root from `main`. Once this change is merged and GitHub Pages finishes rebuilding, open: **https://raghav1822.github.io/ev-gearbox-efficiency-analysis/**
 
 The dashboard runs in the browser with no server-side dependencies. Adjust the controls to update the operating-point metrics and efficiency map.
 
