@@ -1,37 +1,38 @@
-# ev-gearbox-efficiency-analysis
+# EV Gearbox Efficiency Analysis
 
-[![Live demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-50d8e7)](https://raghav1822.github.io/ev-gearbox-efficiency-analysis/)
-[![Tests](https://img.shields.io/badge/Tests-node:test-91d83b)](./tests/gearbox.test.mjs)
+An interactive electric-vehicle drivetrain analysis implemented in MATLAB. The model estimates gearbox efficiency, mesh and spin losses, oil-temperature correction, motor torque, battery power limits, and range impact.
 
-An interactive electric vehicle drivetrain analysis project covering gearbox efficiency, mesh and spin losses, thermal correction, torque scaling, battery power limits, and range penalty estimation.
+## Run the analysis
 
-## Live demo
+Open MATLAB in the repository folder and run:
 
-Open: **https://raghav1822.github.io/ev-gearbox-efficiency-analysis/**
+```matlab
+ev_gearbox_efficiency_analysis
+```
 
-Adjust vehicle speed, wheel torque, gear ratio, battery power, mesh coefficient, spin loss, and oil temperature. The dashboard updates the operating-point metrics and efficiency map.
+Edit the `settings` structure near the top of `ev_gearbox_efficiency_analysis.m` to change vehicle speed, wheel torque, gear ratio, battery power, mesh coefficient, spin loss, or oil temperature. The script prints operating-point metrics and plots the efficiency map with the selected operating point.
+
+## Run tests
+
+From the repository folder, run:
+
+```matlab
+results = runtests('tests');
+disp(results);
+```
+
+The tests cover efficiency bounds, torque scaling, efficiency-map dimensions, and thermal correction behavior.
 
 ## Engineering model
 
-- Wheel torque is reduced by the transmission ratio to obtain motor torque.
-- Wheel power is computed from torque and angular speed.
-- Gear-mesh loss is proportional to motor power and the calibrated mesh coefficient.
-- Bearing and spin losses include a simple oil-temperature correction.
-- Gearbox efficiency is calculated from useful output power and total drivetrain loss.
-- Range effect estimates the percentage energy penalty associated with gearbox loss.
+- Motor speed is calculated from wheel speed, wheel radius, and gear ratio.
+- Motor torque is wheel torque divided by the gear ratio.
+- Gear-mesh loss is proportional to motor output power and the mesh coefficient.
+- Bearing and spin losses use a simple oil-temperature correction referenced to 70 °C.
+- Gearbox efficiency is useful output power divided by output power plus modeled losses.
+- Range impact estimates the percentage energy penalty associated with gearbox loss.
 
-## Run locally
-
-```bash
-npm test
-npm run serve
-```
-
-Then open `http://localhost:8080`.
-
-## Validation
-
-The unit suite verifies efficiency bounds, torque-ratio scaling, the efficiency-map dimensions, and thermal correction behavior.
+This is a simplified engineering model for analysis and comparison, not a validated vehicle performance prediction.
 
 ## License
 
