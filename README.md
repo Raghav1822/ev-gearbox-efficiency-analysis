@@ -1,26 +1,14 @@
-# ev-gearbox-efficiency-analysis
+# EV Gearbox Efficiency Analysis
 
-[![Live demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-50d8e7)](https://raghav1822.github.io/ev-gearbox-efficiency-analysis/)
-[![Tests](https://img.shields.io/badge/Tests-node:test-91d83b)](./tests/gearbox.test.mjs)
+An interactive electric-vehicle drivetrain analysis with a GitHub Pages dashboard and a MATLAB implementation. Explore gearbox efficiency, mesh and spin losses, oil-temperature correction, torque scaling, battery power limits, and estimated range impact.
 
-An interactive electric vehicle drivetrain analysis project covering gearbox efficiency, mesh and spin losses, thermal correction, torque scaling, battery power limits, and range penalty estimation.
+## Live website
 
-## Live demo
+The existing GitHub Pages site is configured to publish the repository root from `main`. Once this change is merged and GitHub Pages finishes rebuilding, open: **https://raghav1822.github.io/ev-gearbox-efficiency-analysis/**
 
-Open: **https://raghav1822.github.io/ev-gearbox-efficiency-analysis/**
+The dashboard runs in the browser with no server-side dependencies. Adjust the controls to update the operating-point metrics and efficiency map.
 
-Adjust vehicle speed, wheel torque, gear ratio, battery power, mesh coefficient, spin loss, and oil temperature. The dashboard updates the operating-point metrics and efficiency map.
-
-## Engineering model
-
-- Wheel torque is reduced by the transmission ratio to obtain motor torque.
-- Wheel power is computed from torque and angular speed.
-- Gear-mesh loss is proportional to motor power and the calibrated mesh coefficient.
-- Bearing and spin losses include a simple oil-temperature correction.
-- Gearbox efficiency is calculated from useful output power and total drivetrain loss.
-- Range effect estimates the percentage energy penalty associated with gearbox loss.
-
-## Run locally
+## Run the website locally
 
 ```bash
 npm test
@@ -29,9 +17,35 @@ npm run serve
 
 Then open `http://localhost:8080`.
 
-## Validation
+## Run the MATLAB analysis
 
-The unit suite verifies efficiency bounds, torque-ratio scaling, the efficiency-map dimensions, and thermal correction behavior.
+Open MATLAB in the repository folder and run:
+
+```matlab
+ev_gearbox_efficiency_analysis
+```
+
+Edit the `settings` structure near the top of `ev_gearbox_efficiency_analysis.m` to change the operating point. The script prints metrics and plots the efficiency map.
+
+Run the MATLAB test suite with:
+
+```matlab
+results = runtests('tests');
+disp(results);
+```
+
+The tests cover efficiency bounds, torque scaling, map dimensions, and thermal correction behavior.
+
+## Engineering model
+
+- Motor speed is calculated from wheel speed, wheel radius, and gear ratio.
+- Motor torque is wheel torque divided by the gear ratio.
+- Gear-mesh loss is proportional to motor output power and the mesh coefficient.
+- Bearing and spin losses use a simple oil-temperature correction referenced to 70 °C.
+- Gearbox efficiency is useful output power divided by output power plus modeled losses.
+- Range impact estimates the percentage energy penalty associated with gearbox loss.
+
+This is a simplified engineering model for analysis and comparison, not a validated vehicle performance prediction.
 
 ## License
 

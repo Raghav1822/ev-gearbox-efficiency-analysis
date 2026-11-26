@@ -9,8 +9,8 @@ export function gearboxEfficiency({ motorTorque, motorSpeed, meshCoefficient, sp
   const bearingLoss = (12 + 0.018 * speed) * thermalFactor;
   const mechanicalLoss = (12 + 0.018 * speed) * thermalFactor;
   const correctedSpin = spinLoss * thermalFactor;
-  const meshLoss = meshCoefficient * (torque * speed * 2 * Math.PI / 60);
   const outputPower = torque * speed * 2 * Math.PI / 60;
+  const meshLoss = meshCoefficient * outputPower;
   const totalLoss = correctedSpin + mechanicalLoss + meshLoss + bearingLoss * 0.35;
   const efficiency = outputPower <= 0 ? 0 : clamp(outputPower / (outputPower + totalLoss), 0.55, 0.995);
   return { efficiency, totalLoss, outputPower, meshLoss, spinLoss: correctedSpin };
@@ -40,22 +40,18 @@ export function operatingPoint({ wheelSpeed, wheelTorque, ratio, batteryPower, m
 }
 
 export function efficiencyGrid({ ratio, meshCoefficient, spinLoss, oilTemperature }) {
-  const points = [];
-  for (let speed = 10; speed <= 160; speed += 10) {
-    const row = [];
-    for (let torque = 20; torque <= 500; torque += 20) {
-      const point = operatingPoint({
-        wheelSpeed: speed,
-        wheelTorque: torque,
-        ratio,
-        batteryPower: 150,
-        meshCoefficient,
-        spinLoss,
-        oilTemperature
-      });
-      row.push({ speed, torque, efficiency: point.efficiency });
-    }
-    points.push(row);
-  }
-  return points;
+  const speeds = Array.from({ length: 16 }, (_, index) => 10 + index * 10);
+  const torques = Array.from({ length: 25 }, (_, index) => 20 + index * 20);
+  return speeds.map((speed) => torques.map((torque) => {
+    const point = operatingPoint({
+      wheelSpeed: speed,
+      wheelTorque: torque,
+      ratio,
+      batteryPower: 150,
+      meshCoefficient,
+      spinLoss,
+      oilTemperature
+    });
+    return { speed, torque, efficiency: point.efficiency };
+  }));
 }

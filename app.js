@@ -2,7 +2,6 @@ import { operatingPoint, efficiencyGrid, clamp } from './gearbox.js';
 
 const canvas = document.getElementById('efficiencyMap');
 const ctx = canvas.getContext('2d');
-
 const ui = {
   speed: document.getElementById('speed'), torque: document.getElementById('torque'),
   ratio: document.getElementById('ratio'), power: document.getElementById('power'),
@@ -25,17 +24,6 @@ function value() {
   };
 }
 
-function sync() {
-  ui.speedOut.textContent = ui.speed.value;
-  ui.torqueOut.textContent = ui.torque.value;
-  ui.ratioOut.textContent = Number(ui.ratio.value).toFixed(1);
-  ui.powerOut.textContent = ui.power.value;
-  ui.meshOut.textContent = Number(ui.mesh.value).toFixed(3);
-  ui.spinOut.textContent = ui.spin.value;
-  ui.oilOut.textContent = ui.oil.value;
-  update();
-}
-
 function efficiencyColor(efficiency) {
   if (efficiency >= 0.96) return '#57e389';
   if (efficiency >= 0.92) return '#91d83b';
@@ -44,26 +32,25 @@ function efficiencyColor(efficiency) {
   return '#df5a67';
 }
 
-function drawMap() {
-  const inputs = value();
+function drawMap(inputs) {
   const grid = efficiencyGrid(inputs);
   const left = 78, right = 828, top = 32, bottom = 462;
   const plotWidth = right - left, plotHeight = bottom - top;
+  const torqueCount = grid[0].length, speedCount = grid.length;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#091522';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const speeds = 16, torques = 25;
-  for (let s = 0; s < speeds; s++) {
-    for (let t = 0; t < torques; t++) {
-      const point = grid[s][t];
-      const x = left + (t / (torques - 1)) * plotWidth;
-      const y = bottom - (s / (speeds - 1)) * plotHeight;
-      const cellW = plotWidth / (torques - 1) + 1;
-      const cellH = plotHeight / (speeds - 1) + 1;
+  for (let speedIndex = 0; speedIndex < speedCount; speedIndex++) {
+    for (let torqueIndex = 0; torqueIndex < torqueCount; torqueIndex++) {
+      const point = grid[speedIndex][torqueIndex];
+      const x = left + point.torque / 500 * plotWidth;
+      const y = bottom - (point.speed - 10) / 150 * plotHeight;
+      const cellW = plotWidth / torqueCount + 1;
+      const cellH = plotHeight / (speedCount - 1) + 1;
       ctx.fillStyle = efficiencyColor(point.efficiency);
-      ctx.globalAlpha = 0.68;
+      ctx.globalAlpha = 0.72;
       ctx.fillRect(x - cellW / 2, y - cellH / 2, cellW, cellH);
     }
   }
@@ -91,7 +78,7 @@ function drawMap() {
   ctx.save(); ctx.translate(20, (top + bottom) / 2); ctx.rotate(-Math.PI / 2);
   ctx.fillText('Vehicle speed (km/h)', 0, 0); ctx.restore();
 
-  const currentX = left + clamp(inputs.wheelTorque, 20, 500) / 500 * plotWidth;
+  const currentX = left + clamp(inputs.wheelTorque, 0, 500) / 500 * plotWidth;
   const currentY = bottom - (clamp(inputs.wheelSpeed, 10, 160) - 10) / 150 * plotHeight;
   ctx.beginPath(); ctx.arc(currentX, currentY, 9, 0, Math.PI * 2);
   ctx.fillStyle = '#fff'; ctx.fill();
@@ -99,14 +86,22 @@ function drawMap() {
 }
 
 function update() {
-  const point = operatingPoint(value());
+  const inputs = value();
+  const point = operatingPoint(inputs);
+  ui.speedOut.textContent = inputs.wheelSpeed;
+  ui.torqueOut.textContent = inputs.wheelTorque;
+  ui.ratioOut.textContent = inputs.ratio.toFixed(1);
+  ui.powerOut.textContent = inputs.batteryPower;
+  ui.meshOut.textContent = inputs.meshCoefficient.toFixed(3);
+  ui.spinOut.textContent = inputs.spinLoss;
+  ui.oilOut.textContent = inputs.oilTemperature;
   ui.efficiency.textContent = `${(point.efficiency * 100).toFixed(1)}%`;
   ui.loss.textContent = `${(point.totalLoss / 1000).toFixed(2)} kW`;
   ui.motorTorque.textContent = `${point.motorTorque.toFixed(1)} Nm`;
   ui.rangeEffect.textContent = point.powerLimited ? 'Battery limited' : `+${point.rangeEffect.toFixed(1)}% loss`;
   ui.efficiency.style.color = efficiencyColor(point.efficiency);
-  drawMap();
+  drawMap(inputs);
 }
 
-[ui.speed, ui.torque, ui.ratio, ui.power, ui.mesh, ui.spin, ui.oil].forEach((input) => input.addEventListener('input', sync));
-sync();
+[ui.speed, ui.torque, ui.ratio, ui.power, ui.mesh, ui.spin, ui.oil].forEach((input) => input.addEventListener('input', update));
+update();
