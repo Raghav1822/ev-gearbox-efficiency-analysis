@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interactive electric vehicle gearbox efficiency and drivetrain loss analysis." />
+  <meta name="theme-color" content="#07111d" />
+  <title>EV Gearbox Efficiency Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Electric Vehicle Drivetrain Analysis</p>
+      <h1>Gearbox Efficiency Lab</h1>
+      <p class="intro">Explore drivetrain losses, battery power limits, and estimated range impact at different operating points.</p>
+    </header>
+
+    <section class="dashboard" aria-label="Gearbox analysis dashboard">
+      <aside class="panel inputs" aria-label="Analysis inputs">
+        <h2>Operating point</h2>
+        <label for="speed">Wheel speed <output id="speedOut">70</output> km/h</label>
+        <input id="speed" type="range" min="10" max="160" value="70" />
+        <label for="torque">Wheel torque <output id="torqueOut">180</output> Nm</label>
+        <input id="torque" type="range" min="20" max="500" value="180" />
+        <label for="ratio">Gear ratio <output id="ratioOut">8.0</output></label>
+        <input id="ratio" type="range" min="4" max="12" step="0.1" value="8" />
+        <label for="power">Battery power <output id="powerOut">60</output> kW</label>
+        <input id="power" type="range" min="10" max="150" value="60" />
+
+        <h2 class="secondary-heading">Loss model</h2>
+        <label for="mesh">Mesh coefficient <output id="meshOut">0.018</output></label>
+        <input id="mesh" type="range" min="0.005" max="0.035" step="0.001" value="0.018" />
+        <label for="spin">Spin loss <output id="spinOut">450</output> W</label>
+        <input id="spin" type="range" min="100" max="1200" step="10" value="450" />
+        <label for="oil">Oil temperature <output id="oilOut">70</output> °C</label>
+        <input id="oil" type="range" min="20" max="110" value="70" />
+      </aside>
+
+      <section class="panel visualization" aria-label="Analysis results">
+        <div class="metric-grid" aria-live="polite">
+          <article><span>Gearbox efficiency</span><strong id="efficiency">--</strong></article>
+          <article><span>Total modeled loss</span><strong id="loss">--</strong></article>
+          <article><span>Motor torque</span><strong id="motorTorque">--</strong></article>
+          <article><span>Estimated range effect</span><strong id="rangeEffect">--</strong></article>
+        </div>
+        <canvas id="efficiencyMap" width="860" height="520" role="img" aria-label="Efficiency map by vehicle speed and wheel torque; a white marker shows the selected operating point."></canvas>
+        <div class="legend"><span><i class="dot active"></i>Selected operating point</span><span>Efficiency: <b>lower</b> to <b>higher</b> left-to-right</span></div>
+      </section>
+    </section>
+
+    <section class="panel equations">
+      <h2>Model overview</h2>
+      <div class="equation-grid">
+        <p><strong>Motor speed</strong><br />ω<sub>motor</sub> = ω<sub>wheel</sub> × gear ratio</p>
+        <p><strong>Torque relation</strong><br />T<sub>motor</sub> = T<sub>wheel</sub> / gear ratio</p>
+        <p><strong>Mesh loss</strong><br />P<sub>mesh</sub> = C<sub>mesh</sub> × P<sub>motor output</sub></p>
+        <p><strong>Thermal correction</strong><br />Loss × (70 / T<sub>oil</sub>)<sup>0.12</sup></p>
+      </div>
+      <p class="disclaimer">Simplified engineering model for comparison and learning; not a validated vehicle performance prediction. MATLAB source and tests are included in this repository.</p>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
