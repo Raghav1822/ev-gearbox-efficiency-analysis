@@ -1,4 +1,4 @@
-root { color-scheme: dark; --bg:#07111d; --panel:#101e2d; --cyan:#50d8e7; --green:#91d83b; --yellow:#ffd166; --text:#edf5ff; --muted:#96aabd; }
+:root { color-scheme: dark; --bg:#07111d; --panel:#101e2d; --cyan:#50d8e7; --green:#91d83b; --yellow:#ffd166; --text:#edf5ff; --muted:#96aabd; }
 * { box-sizing:border-box; }
 body { margin:0; min-height:100vh; background:radial-gradient(circle at 80% 0%, #12354b 0, var(--bg) 42%); color:var(--text); font-family:Inter,Segoe UI,sans-serif; }
 main { max-width:1180px; margin:auto; padding:28px 20px 50px; }
